@@ -9,7 +9,7 @@ IMAGE_INSTALL = "packagegroup-core-boot \
                  libubootenv-bin \
                  boot-mark-good \
                  ${CORE_IMAGE_EXTRA_INSTALL}"
-IMAGE_FEATURES += "ssh-server-openssh allow-root-login"
+IMAGE_FEATURES += "ssh-server-openssh allow-root-login read-only-rootfs"
 
 # A/B dual-rootfs partition layout
 WKS_FILE = "edge-platform-dual.wks.in"
@@ -52,5 +52,45 @@ python set_root_password_hash () {
 }
 
 ROOTFS_POSTPROCESS_COMMAND += " set_root_password_hash;"
+
+ROOT_SSH_AUTHORIZED_KEYS ?= ""
+
+# Inject SSH authorized keys safely at build time
+python set_ssh_authorized_keys () {
+    import os
+
+    ssh_keys = d.getVar("ROOT_SSH_AUTHORIZED_KEYS") or ""
+    if not ssh_keys:
+        return
+
+    ssh_dir = os.path.join(d.getVar("IMAGE_ROOTFS"), "home", "root", ".ssh")
+    if not os.path.exists(ssh_dir):
+        os.makedirs(ssh_dir, mode=0o700)
+
+    keys_file = os.path.join(ssh_dir, "authorized_keys")
+    with open(keys_file, "w", encoding="utf-8") as f:
+        f.write(ssh_keys + "\n")
+    
+    os.chmod(keys_file, 0o600)
+}
+
+ROOTFS_POSTPROCESS_COMMAND += " set_ssh_authorized_keys;"
+
+# Create the /data mountpoint anchor on the root filesystem so WIC can mount the 4th partition there
+create_data_mountpoint () {
+    install -d ${IMAGE_ROOTFS}/data
+}
+
+ROOTFS_POSTPROCESS_COMMAND += " create_data_mountpoint;"
+
+# Disable SSH password authentication for production security
+disable_ssh_passwords () {
+    if [ -f ${IMAGE_ROOTFS}/etc/ssh/sshd_config ]; then
+        sed -i -e 's/^[#[:space:]]*PasswordAuthentication.*/PasswordAuthentication no/' ${IMAGE_ROOTFS}/etc/ssh/sshd_config
+        sed -i -e 's/^[#[:space:]]*PermitEmptyPasswords.*/PermitEmptyPasswords no/' ${IMAGE_ROOTFS}/etc/ssh/sshd_config
+    fi
+}
+
+ROOTFS_POSTPROCESS_COMMAND += " disable_ssh_passwords;"
 
 IMAGE_ROOTFS_EXTRA_SPACE:append = "${@bb.utils.contains("DISTRO_FEATURES", "systemd", " + 4096", "", d)}"
