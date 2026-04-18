@@ -28,6 +28,8 @@ and broader platform integration over time.
 - **systemd:** The Linux init system and service manager. It allows us to predictably sequence hardware bring-up and provides precise timer components (used for our 30-sec `boot-mark-good` validation trigger).
 - **wpa_supplicant & iw:** User-space tools integrated to establish headless WPA/WPA2 wireless networking out of the box.
 - **OpenSSH:** Standard suite for secure headless administration via ssh.
+- **ext4:** The reliable standard Linux filesystem chosen to format our dual root partitions.
+- **rpidistro-bcm43456:** The proprietary Broadcom firmware blobs explicitly deployed to drive the Raspberry Pi 4's Wi-Fi and Bluetooth radios.
 
 ## Build Notes
 
