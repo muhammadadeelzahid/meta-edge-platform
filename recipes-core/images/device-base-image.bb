@@ -1,4 +1,4 @@
-SUMMARY = "Edge platform Linux image"
+SUMMARY = "Device Base Linux image"
 
 IMAGE_INSTALL = "packagegroup-core-boot \
                  kernel-modules \
@@ -8,12 +8,12 @@ IMAGE_INSTALL = "packagegroup-core-boot \
                  iw \
                  libubootenv-bin \
                  boot-mark-good \
-                 edge-platform-overlays \
+                 device-base-overlays \
                  ${CORE_IMAGE_EXTRA_INSTALL}"
 IMAGE_FEATURES += "ssh-server-openssh allow-root-login read-only-rootfs overlayfs-etc"
 
 # A/B dual-rootfs partition layout
-WKS_FILE = "edge-platform-dual.wks.in"
+WKS_FILE = "device-base-dual.wks.in"
 IMAGE_FSTYPES:append = " ext4"
 
 IMAGE_LINGUAS = " "
@@ -113,5 +113,5 @@ OVERLAYFS_ETC_USE_ORIG_INIT_NAME = "1"
 # QEMU boots a flat ext4 rootfs with no partition table, so the
 # /data partition (/dev/mmcblk0p4) and OverlayFS mounts do not apply.
 IMAGE_FEATURES:remove:qemuall = "read-only-rootfs overlayfs-etc"
-IMAGE_INSTALL:remove:qemuall = "edge-platform-overlays"
+IMAGE_INSTALL:remove:qemuall = "device-base-overlays"
 OVERLAYFS_ETC_DEVICE:qemuall = ""

@@ -39,7 +39,7 @@ applications (like UI or custom daemons) to be maintained in separate app layers
 2. Add the following to your `build-rpi/conf/local.conf`:
 
 ```bitbake
-DISTRO ?= "edge-platform"
+DISTRO ?= "device-base"
 MACHINE ?= "raspberrypi4-64"
 RPI_USE_U_BOOT = "1"
 INHERIT += "rm_work"
@@ -51,7 +51,7 @@ ROOT_SSH_AUTHORIZED_KEYS = "ssh-ed25519 AAAAC3Nz... dev@workstation"
 3. Build the platform image:
 
 ```bash
-bitbake edge-platform-image
+bitbake device-base-image
 ```
 
 ## QEMU Simulation
