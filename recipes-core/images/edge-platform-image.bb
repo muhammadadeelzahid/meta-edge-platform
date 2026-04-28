@@ -106,3 +106,12 @@ OVERLAYFS_ETC_MOUNT_POINT = "/data"
 OVERLAYFS_ETC_FSTYPE = "ext4"
 OVERLAYFS_ETC_DEVICE = "/dev/mmcblk0p4"
 OVERLAYFS_ETC_USE_ORIG_INIT_NAME = "1"
+
+# -------------------------------------------------------------
+# QEMU Simulation Overrides
+# -------------------------------------------------------------
+# QEMU boots a flat ext4 rootfs with no partition table, so the
+# /data partition (/dev/mmcblk0p4) and OverlayFS mounts do not apply.
+IMAGE_FEATURES:remove:qemuall = "read-only-rootfs overlayfs-etc"
+IMAGE_INSTALL:remove:qemuall = "edge-platform-overlays"
+OVERLAYFS_ETC_DEVICE:qemuall = ""
