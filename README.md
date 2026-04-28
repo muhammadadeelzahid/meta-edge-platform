@@ -1,11 +1,11 @@
-# meta-edge-platform
+# meta-device-base
 
 Yocto layer providing an embedded Linux platform for edge devices.
 Includes foundations for secure networking, system initialization, and OTA updates.
 
 ## Overview
 
-This repository contains the custom Yocto layer (`meta-edge-platform`) to build the
+This repository contains the custom Yocto layer (`meta-device-base`) to build the
 platform image and configuration for Raspberry Pi.
 
 Key features include:
@@ -52,6 +52,16 @@ ROOT_SSH_AUTHORIZED_KEYS = "ssh-ed25519 AAAAC3Nz... dev@workstation"
 
 ```bash
 bitbake edge-platform-image
+```
+
+## QEMU Simulation
+
+To test the image without physical hardware, set `MACHINE = "qemuarm64"` in
+`local.conf` and build normally. The image recipe automatically disables the
+read-only rootfs and OverlayFS features for QEMU targets. Launch with:
+
+```bash
+runqemu qemuarm64 nographic
 ```
 
 ## Secrets
